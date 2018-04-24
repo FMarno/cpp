@@ -7,5 +7,8 @@ include_directories(${CMAKE_SOURCE_DIR}/lib/websocketpp)
 
 find_package(Boost REQUIRED system)
 
-add_executable(server main.cpp)
+add_executable(example main.cpp)
+target_link_libraries(example Boost::system)
+
+add_executable(server server.cpp)
 target_link_libraries(server Boost::system)
