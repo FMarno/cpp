@@ -12,3 +12,6 @@ target_link_libraries(example Boost::system)
 
 add_executable(server server.cpp)
 target_link_libraries(server Boost::system)
+
+add_executable(client client.cpp)
+target_link_libraries(client Boost::system)

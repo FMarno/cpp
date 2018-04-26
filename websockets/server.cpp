@@ -4,14 +4,16 @@
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 
-void on_message(websocketpp::connection_hdl, server::message_ptr msg) {
-  std::cout << msg->get_payload() << '\n';
+void on_message(server& endpoint, websocketpp::connection_hdl hdl, server::message_ptr msg)
+{
+    std::cout << msg->get_payload() << '\n';
+    endpoint.send(hdl, msg->get_payload(), msg->get_opcode());
 }
 
 class utility_server {
   server m_endpoint;
 
-public:
+  public:
   utility_server() {
     m_endpoint.set_error_channels(websocketpp::log::elevel::all);
     m_endpoint.set_access_channels(websocketpp::log::alevel::all ^
@@ -19,10 +21,11 @@ public:
     m_endpoint.init_asio();
   }
   void run() {
-    m_endpoint.set_message_handler(&on_message);
-    m_endpoint.listen(9002);
-    m_endpoint.start_accept();
-    m_endpoint.run();
+      m_endpoint.set_message_handler(
+          [this](auto hdl, auto msg) { on_message(m_endpoint, hdl, msg); });
+      m_endpoint.listen(9002);
+      m_endpoint.start_accept();
+      m_endpoint.run();
   }
 };
 
